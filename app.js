@@ -1,23 +1,44 @@
-var express = require("express");
-var app = express();
-var bodyParser = require("body-parser");
+var express = require("express"),
+    app = express(),
+    bodyParser = require("body-parser"),
+    mongoose = require("mongoose")
+
+mongoose.connect("mongodb://localhost/yelpcamp_db");
+// SCHEMA SET UP
+var campgroundSchema = new mongoose.Schema({
+    name: String,
+    image: String
+});
+
+var Campground = mongoose.model("Campground", campgroundSchema);
+
+// Campground.create({
+//   name: "Lion Head",
+//   image: "https://farm3.staticflickr.com/2311/2123340163_af7cba3be7.jpg"
+// },function(error,campground){
+//   if(error){
+//     console.log("Error: Something farted...");
+//   } else {
+//     console.log(campground);
+//   }
+// });
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
-
-var campgrounds = [
-  {name: "Eagle Head", image: "https://farm2.staticflickr.com/1281/4684194306_18ebcdb01c.jpg"},
-  {name: "Owl Head", image: "https://farm4.staticflickr.com/3872/14435096036_39db8f04bc.jpg"},
-  {name: "Lion Head", image: "https://farm3.staticflickr.com/2311/2123340163_af7cba3be7.jpg"}
-]
 
 app.get("/", function(request, response){
   response.render("landing")
 });
 
 app.get("/campgrounds", function(request, response){
-  response.render("campgrounds", {campgrounds: campgrounds})
+  var campgrounds = Campground.find({}, function(error, campgrounds){
+    if(error){
+      console.log(error);
+    } else {
+      response.render("campgrounds", {campgrounds: campgrounds})
+    }
+  });
 });
 
 app.post("/campgrounds", function(request, response){
