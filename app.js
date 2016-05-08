@@ -38,7 +38,7 @@ app.get("/campgrounds", function(request, response){
     if(error){
       console.log(error);
     } else {
-      response.render("campgrounds", {campgrounds: campgrounds});
+      response.render("index", {campgrounds: campgrounds});
     }
   });
 });
@@ -66,8 +66,14 @@ app.get("/campgrounds/new", function(request, response){
 
 // SHOW - Show page for each campsite
 app.get("/campgrounds/:id", function(request, response){
-  var campground = Campground.find({})
-  response.render("show");
+  var id = request.params.id
+  var campground = Campground.findById(id, function(error, foundCamp){
+    if(error){
+      console.log(error)
+    } else {
+      response.render("show",{ campground: foundCamp });
+    }
+  })
 })
 
 // App Begins Listening Here
