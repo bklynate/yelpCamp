@@ -46,9 +46,11 @@ app.get("/campgrounds", function(request, response){
 app.post("/campgrounds", function(request, response){
   var campgroundName = request.body.campgroundName;
   var image = request.body.image;
+  var description = request.body.description
   var newCampground = {
     name: campgroundName,
-    image: image
+    image: image,
+    description: description
   };
 
   Campground.create(newCampground, function(error, newCampground){
