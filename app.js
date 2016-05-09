@@ -4,8 +4,6 @@ var express = require("express"),
     mongoose = require("mongoose")
 
 mongoose.connect("mongodb://localhost/yelpcamp_db");
-// mongoose.connect("mongodb://nathan:bloods12@ds017432.mlab.com:17432/heroku_0x90k9m5")
-
 
 // SCHEMA SET UP
 var campgroundSchema = new mongoose.Schema({
