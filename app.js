@@ -17,17 +17,17 @@ var campgroundSchema = new mongoose.Schema({
 
 var Campground = mongoose.model("Campground", campgroundSchema);
 
-// Campground.create({
-//   name: "Lion Head",
-//   image: "https://farm3.staticflickr.com/2311/2123340163_af7cba3be7.jpg",
-//   description: "Brave the wilderness of the beautiful 'Lion Head Preservation' "
-// },function(error,campground){
-//   if(error){
-//     console.log("Error: Something farted...");
-//   } else {
-//     console.log(campground);
-//   }
-// });
+Campground.create({
+  name: "Lion Head",
+  image: "https://farm3.staticflickr.com/2311/2123340163_af7cba3be7.jpg",
+  description: "Brave the wilderness of the beautiful 'Lion Head Preservation' "
+},function(error,campground){
+  if(error){
+    console.log("Error: Something farted...");
+  } else {
+    console.log(campground);
+  }
+});
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
