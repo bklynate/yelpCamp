@@ -5,7 +5,7 @@ var express = require("express"),
 
 // mongoose.connect("mongodb://localhost/yelpcamp_db");
 
-mongoose.connect("mongodb://admin:password@ds017432.mlab.com:17432/heroku_0x90k9m5")
+mongoose.connect("mongodb://admin:password@ds017432.mlab.com:17432/heroku_0x90k9m5");
 
 
 // SCHEMA SET UP
