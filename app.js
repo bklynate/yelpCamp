@@ -3,10 +3,7 @@ var express = require("express"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose")
 
-// mongoose.connect("mongodb://localhost/yelpcamp_db");
-
-mongoose.connect("mongodb://admin:password@ds017432.mlab.com:17432/heroku_0x90k9m5");
-
+mongoose.connect(process.env.DATABASEURL);
 
 // SCHEMA SET UP
 var campgroundSchema = new mongoose.Schema({
@@ -29,7 +26,7 @@ Campground.create({
   }
 });
 
-app.set('port', (process.env.PORT || 5000));
+app.set('port', (process.env.PORT || 3000));
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
