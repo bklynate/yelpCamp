@@ -85,6 +85,7 @@ app.get("/campgrounds/:id", function(request, response){
 })
 
 // App Begins Listening Here
-app.listen(3000, function(){
+
+app.listen(app.get('port'), function(){
   console.log("Nathaniel made me listen...");
 });
