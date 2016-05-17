@@ -1,36 +1,19 @@
 var express = require("express"),
     app = express(),
     bodyParser = require("body-parser"),
-    mongoose = require("mongoose")
+    mongoose = require("mongoose"),
+    Campground = require("./models/campground"),
+    seedDB = require("./seeds")
 
-mongoose.connect(process.env.DATABASEURL);
-
-// SCHEMA SET UP
-var campgroundSchema = new mongoose.Schema({
-    name: String,
-    image: String,
-    description: String
-});
-
-var Campground = mongoose.model("Campground", campgroundSchema);
-
-Campground.create({
-  name: "Lion Head",
-  image: "https://farm3.staticflickr.com/2311/2123340163_af7cba3be7.jpg",
-  description: "Brave the wilderness of the beautiful 'Lion Head Preservation' "
-},function(error,campground){
-  if(error){
-    console.log("Error: Something farted...");
-  } else {
-    console.log(campground);
-  }
-});
+// mongoose.connect(process.env.DATABASEURL);
+mongoose.connect("mongodb://localhost/yelpcamp_db_v3");
 
 app.set('port', (process.env.PORT || 3000));
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
+seedDB();
 
 app.get("/", function(request, response){
   response.render("landing");
@@ -72,10 +55,11 @@ app.get("/campgrounds/new", function(request, response){
 // SHOW - Show page for each campsite
 app.get("/campgrounds/:id", function(request, response){
   var id = request.params.id
-  var campground = Campground.findById(id, function(error, foundCamp){
+  var campground = Campground.findById(id).populate("comments").exec(function(error, foundCamp){
     if(error){
       console.log(error)
     } else {
+      console.log(foundCamp);
       response.render("show",{ campground: foundCamp });
     }
   })
