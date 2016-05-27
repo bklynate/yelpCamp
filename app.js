@@ -14,8 +14,6 @@ var express = require("express"),
 mongoose.connect("mongodb://localhost/yelpcamp_db_v6");
 
 app.set('port', (process.env.PORT || 3000));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
@@ -30,6 +28,8 @@ app.use(require("express-session")({
   saveUninitialized: false
 }));
 
+app.use(passport.initialize());
+app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 // THEY READ THE SESSION ENCODES AND
 // THEN DECODES THE SESSION
@@ -45,7 +45,7 @@ app.get("/", function(request, response){
 });
 
 app.get("/campgrounds", function(request, response){
-  var campgrounds = Campground.find({}, function(error, campgrounds){
+  Campground.find({}, function(error, campgrounds){
     if(error){
       console.log(error);
     } else {
@@ -92,7 +92,7 @@ app.get("/campgrounds/:id", function(request, response){
 //============================
 // COMMENTS ROUTES
 //============================
-app.get("/campgrounds/:id/comments/new", function(request, response){
+app.get("/campgrounds/:id/comments/new", isLoggedIn, function(request, response){
   Campground.findById(request.params.id, function(error,campground){
     if(error){
       console.log(error);
@@ -151,9 +151,9 @@ app.get("/login", function(request, response){
 });
 
 app.post("/login", passport.authenticate("local", {
-  successRedirect: "/campgrounds",
-  failureRedirect: "/login"
-}), function(request, response){
+    successRedirect: "/campgrounds",
+    failureRedirect: "/login"
+  }), function(request, response){
   // -------------
 });
 
@@ -161,6 +161,16 @@ app.get("/logout", function(request, response){
   request.logout();
   response.redirect("/");
 });
+
+// ---MIDDLEWARE TO CHECK IF USER
+// ---IS LOGGED IN
+function isLoggedIn(request, response, next){
+  if(request.isAuthenticated()){
+    return next();
+  }
+  response.redirect("/")
+}
+
 // App Begins Listening Here
 app.listen(app.get('port'), function(){
   console.log("Nathaniel made me listen...");
