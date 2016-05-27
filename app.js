@@ -143,6 +143,24 @@ app.post("/signup", function(request, response){
   });
 });
 
+//============================
+// LOGIN ROUTES
+//============================
+app.get("/login", function(request, response){
+  response.render("login");
+});
+
+app.post("/login", passport.authenticate("local", {
+  successRedirect: "/campgrounds",
+  failureRedirect: "/login"
+}), function(request, response){
+  // -------------
+});
+
+app.get("/logout", function(request, response){
+  request.logout();
+  response.redirect("/");
+});
 // App Begins Listening Here
 app.listen(app.get('port'), function(){
   console.log("Nathaniel made me listen...");
