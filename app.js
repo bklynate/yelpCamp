@@ -4,17 +4,41 @@ var express = require("express"),
     mongoose = require("mongoose"),
     Campground = require("./models/campground"),
     seedDB = require("./seeds"),
-    Comment = require("./models/comment")
+    Comment = require("./models/comment"),
+    passport = require("passport"),
+    LocalStrategy = require("passport-local"),
+    passportLocalMongoose = require("passport-local-mongoose"),
+    User = require("./models/user")
 
 // mongoose.connect(process.env.DATABASEURL);
-mongoose.connect("mongodb://localhost/yelpcamp_db_v3");
+mongoose.connect("mongodb://localhost/yelpcamp_db_v6");
 
 app.set('port', (process.env.PORT || 3000));
-
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 // seedDB();
+
+//=============================
+//=====PASSPORT CONFIG=========
+//=============================
+app.use(require("express-session")({
+  secret: "5674382910",
+  resave: false,
+  saveUninitialized: false
+}));
+
+passport.use(new LocalStrategy(User.authenticate()));
+// THEY READ THE SESSION ENCODES AND
+// THEN DECODES THE SESSION
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+//=============================
+//=============ROUTES==========
+//=============================
 
 app.get("/", function(request, response){
   response.render("landing");
@@ -97,6 +121,26 @@ app.post("/campgrounds/:id/comments", function(request, response){
       });
     }
   })
+});
+
+//============================
+// SIGN UP ROUTES
+//============================
+app.get("/signup", function(request, response){
+  response.render("signup");
+});
+
+app.post("/signup", function(request, response){
+  var newUser = new User({username: request.body.username})
+  User.register(newUser, request.body.password, function(error, user){
+    if(error){
+      console.log(error);
+      return response.render("signup");
+    }
+    passport.authenticate("local")(request, response, function(){
+      response.redirect("/campgrounds");
+    });
+  });
 });
 
 // App Begins Listening Here

@@ -1,0 +1,15 @@
+body {
+  font-family: 'Work Sans', sans-serif !important;
+}
+
+.thumbnail .caption-full {
+  padding: 9px;
+}
+
+.thumbnail img {
+  width: 100%;
+}
+
+.thumbnail {
+  padding: 0;
+}
