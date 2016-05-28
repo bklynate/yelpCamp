@@ -37,6 +37,21 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 //=============================
+//=========MIDDLEWARE==========
+//=============================
+app.use(function(request, response, next){
+  response.locals.currentUser = request.user;
+  next();
+});
+
+function isLoggedIn(request, response, next){
+  if(request.isAuthenticated()){
+    return next();
+  }
+  response.redirect("/login");
+}
+
+//=============================
 //=============ROUTES==========
 //=============================
 
@@ -45,6 +60,7 @@ app.get("/", function(request, response){
 });
 
 app.get("/campgrounds", function(request, response){
+  console.log(request.user);
   Campground.find({}, function(error, campgrounds){
     if(error){
       console.log(error);
@@ -102,7 +118,7 @@ app.get("/campgrounds/:id/comments/new", isLoggedIn, function(request, response)
   })
 });
 
-app.post("/campgrounds/:id/comments", function(request, response){
+app.post("/campgrounds/:id/comments", isLoggedIn, function(request, response){
   // Find the correct campground to leave the comment on
   Campground.findById(request.params.id, function(error, campground){
     if(error){
@@ -161,15 +177,6 @@ app.get("/logout", function(request, response){
   request.logout();
   response.redirect("/");
 });
-
-// ---MIDDLEWARE TO CHECK IF USER
-// ---IS LOGGED IN
-function isLoggedIn(request, response, next){
-  if(request.isAuthenticated()){
-    return next();
-  }
-  response.redirect("/")
-}
 
 // App Begins Listening Here
 app.listen(app.get('port'), function(){
