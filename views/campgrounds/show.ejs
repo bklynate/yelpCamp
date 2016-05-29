@@ -25,12 +25,12 @@
             <%= campground.description %>
           </p>
           <% if(currentUser.username === campground.author.username) {%>
-            <a href="/campgrounds/<%= campground._id %>/edit">Edit Details</a>
+            <a class="btn btn-warning" href="/campgrounds/<%= campground._id %>/edit">Edit Details</a>
           <% } %>
         </div>
       </div>
       <div class="well">
-        <div class="text-center ">
+        <div class="text-right">
           <a class="btn btn-success" href="/campgrounds/<%= campground._id %>/comments/new">Add new comment</a>
         </div>
         <hr>
