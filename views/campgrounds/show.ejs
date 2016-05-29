@@ -24,8 +24,9 @@
           <p>
             <%= campground.description %>
           </p>
-
-          <a href="/campgrounds/<%= campground._id %>/edit">Edit Details</a>
+          <% if(currentUser.username === campground.author.username) {%>
+            <a href="/campgrounds/<%= campground._id %>/edit">Edit Details</a>
+          <% } %>
         </div>
       </div>
       <div class="well">

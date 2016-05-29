@@ -54,7 +54,7 @@ router.get("/campgrounds/:id", function(request, response){
 });
 
 // EDIT - Edit the a campsite
-router.get("/campgrounds/:id/edit", function(request, response){
+router.get("/campgrounds/:id/edit", isLoggedIn, function(request, response){
   Campground.findById(request.params.id, function(error, foundCamp){
     if(error){
       console.log(error);
@@ -65,7 +65,7 @@ router.get("/campgrounds/:id/edit", function(request, response){
 });
 
 // UPDATE - Update the campsite information
-router.put("/campgrounds/:id", function(request, response){
+router.put("/campgrounds/:id", isLoggedIn,  function(request, response){
   Campground.findByIdAndUpdate(request.params.id, request.body, function(error, editedCamp){
     if(error){
       console.log(error);
