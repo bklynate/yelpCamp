@@ -27,6 +27,9 @@ router.post("/campgrounds/:id/comments", isLoggedIn, function(request, response)
         if(error){
           console.log(error);
         } else {
+          comment.author.username = request.user.username;
+          comment.author.id = request.user._id;
+          comment.save();
           campground.comments.push(comment);
           campground.save();
           // redirect to the campground page

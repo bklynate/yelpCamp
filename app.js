@@ -31,7 +31,6 @@ app.use(require("express-session")({
   resave: false,
   saveUninitialized: false
 }));
-
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
@@ -48,18 +47,16 @@ app.use(function(request, response, next){
   next();
 });
 
+//=============================
+//=====IMPORT   ROUTES=========
+//=============================
 app.use(indexRoutes);
 app.use(campgroundRoutes);
 app.use(commentRoutes);
 
-function isLoggedIn(request, response, next){
-  if(request.isAuthenticated()){
-    return next();
-  }
-  response.redirect("/login");
-}
-
-// App Begins Listening Here
+//=============================
+//= App Begins Listening Here =
+//=============================
 app.listen(app.get('port'), function(){
   console.log("Nathaniel made me listen...");
 });

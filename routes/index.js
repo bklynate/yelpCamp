@@ -51,6 +51,10 @@ router.get("/logout", function(request, response){
   response.redirect("/");
 });
 
+//=============================
+//=========MIDDLEWARE==========
+//=============================
+
 function isLoggedIn(request, response, next){
   if(request.isAuthenticated()){
     return next();

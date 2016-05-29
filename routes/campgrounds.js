@@ -23,7 +23,7 @@ router.post("/campgrounds", function(request, response){
     description: description
   };
 
-  Campground.create(newCampground, function(error, newCampground){
+  Campground.create(newCampground, isLoggedIn, function(error, newCampground){
     if(error){
       console.log(error);
     } else {
@@ -32,7 +32,7 @@ router.post("/campgrounds", function(request, response){
   });
 });
 
-router.get("/campgrounds/new", function(request, response){
+router.get("/campgrounds/new", isLoggedIn, function(request, response){
   response.render("campgrounds/new");
 });
 
@@ -48,4 +48,10 @@ router.get("/campgrounds/:id", function(request, response){
   });
 });
 
+function isLoggedIn(request, response, next){
+  if(request.isAuthenticated()){
+    return next();
+  }
+  response.redirect("/login");
+}
 module.exports = router;

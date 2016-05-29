@@ -25,38 +25,38 @@ var data = [
   }
 ]
 
-function seedDB(){
-  // remove all campground data from the db
-  Campground.remove({},function(error){
-    if(error){
-      console.log(error);
-    } else {
-      console.log("removed data");
-    }
-  });
-  // seed the db with campground information
-  data.forEach(function(seed){
-    Campground.create(seed, function(error, campground){
-      if(error){
-        console.log(error);
-      } else {
-        console.log("added campground");
-        // Create a comment
-        Comment.create({
-          text: "This is a great place for burgers~!",
-          author: "Bob Belcher"
-        }, function(error, comment){
-          if(error){
-            console.log(error);
-          } else{
-            campground.comments.push(comment)
-            campground.save();
-            console.log("Created a new comment");
-          }
-        });
-      }
-    });
-  });
+ function seedDB(){
+//   // remove all campground data from the db
+//   Campground.remove({},function(error){
+//     if(error){
+//       console.log(error);
+//     } else {
+//       console.log("removed data");
+//     }
+//   });
+//   // seed the db with campground information
+//   data.forEach(function(seed){
+//     Campground.create(seed, function(error, campground){
+//       if(error){
+//         console.log(error);
+//       } else {
+//         console.log("added campground");
+//         // Create a comment
+//         Comment.create({
+//           text: "This is a great place for burgers~!",
+//           author: "Bob Belcher"
+//         }, function(error, comment){
+//           if(error){
+//             console.log(error);
+//           } else{
+//             campground.comments.push(comment)
+//             campground.save();
+//             console.log("Created a new comment");
+//           }
+//         });
+//       }
+//     });
+//   });
 }
 
 module.exports = seedDB;
