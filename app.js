@@ -8,7 +8,9 @@ var express = require("express"),
     passport = require("passport"),
     LocalStrategy = require("passport-local"),
     passportLocalMongoose = require("passport-local-mongoose"),
-    User = require("./models/user")
+    User = require("./models/user"),
+    methodOverride = require("method-override")
+
 
 var commentRoutes = require("./routes/comments"),
     indexRoutes = require("./routes/index"),
@@ -21,6 +23,7 @@ app.set('port', (process.env.PORT || 3000));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
+app.use(methodOverride("_method"));
 // seedDB();
 
 //=============================

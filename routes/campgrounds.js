@@ -3,7 +3,6 @@ var router = express.Router();
 var Campground = require("../models/campground");
 
 router.get("/campgrounds", function(request, response){
-  console.log(request.user);
   Campground.find({}, function(error, campgrounds){
     if(error){
       console.log(error);
@@ -13,20 +12,26 @@ router.get("/campgrounds", function(request, response){
   });
 });
 
-router.post("/campgrounds", function(request, response){
+router.post("/campgrounds", isLoggedIn, function(request, response){
   var campgroundName = request.body.campgroundName;
   var image = request.body.image;
   var description = request.body.description;
+  var author = {
+    id: request.user._id,
+    username: request.user.username
+  }
   var newCampground = {
     name: campgroundName,
     image: image,
-    description: description
+    description: description,
+    author: author
   };
 
-  Campground.create(newCampground, isLoggedIn, function(error, newCampground){
+  Campground.create(newCampground, function(error, newCampground){
     if(error){
       console.log(error);
     } else {
+      console.log(newCampground);
       response.redirect("/campgrounds");
     }
   });
@@ -44,6 +49,28 @@ router.get("/campgrounds/:id", function(request, response){
       console.log(error);
     } else {
       response.render("campgrounds/show", { campground: foundCamp });
+    }
+  });
+});
+
+// EDIT - Edit the a campsite
+router.get("/campgrounds/:id/edit", function(request, response){
+  Campground.findById(request.params.id, function(error, foundCamp){
+    if(error){
+      console.log(error);
+    } else {
+      response.render("campgrounds/edit",{campground:foundCamp});
+    }
+  })
+});
+
+// UPDATE - Update the campsite information
+router.put("/campgrounds/:id", function(request, response){
+  Campground.findByIdAndUpdate(request.params.id, request.body, function(error, editedCamp){
+    if(error){
+      console.log(error);
+    } else {
+      response.redirect("/campgrounds/" + request.params.id)
     }
   });
 });
