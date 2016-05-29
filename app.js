@@ -10,6 +10,10 @@ var express = require("express"),
     passportLocalMongoose = require("passport-local-mongoose"),
     User = require("./models/user")
 
+var commentRoutes = require("./routes/comments"),
+    indexRoutes = require("./routes/index"),
+    campgroundRoutes = require("./routes/campgrounds")
+
 // mongoose.connect(process.env.DATABASEURL);
 mongoose.connect("mongodb://localhost/yelpcamp_db_v6");
 
@@ -44,139 +48,16 @@ app.use(function(request, response, next){
   next();
 });
 
+app.use(indexRoutes);
+app.use(campgroundRoutes);
+app.use(commentRoutes);
+
 function isLoggedIn(request, response, next){
   if(request.isAuthenticated()){
     return next();
   }
   response.redirect("/login");
 }
-
-//=============================
-//=============ROUTES==========
-//=============================
-
-app.get("/", function(request, response){
-  response.render("landing");
-});
-
-app.get("/campgrounds", function(request, response){
-  console.log(request.user);
-  Campground.find({}, function(error, campgrounds){
-    if(error){
-      console.log(error);
-    } else {
-      response.render("campgrounds/index", {campgrounds: campgrounds});
-    }
-  });
-});
-
-app.post("/campgrounds", function(request, response){
-  var campgroundName = request.body.campgroundName;
-  var image = request.body.image;
-  var description = request.body.description;
-  var newCampground = {
-    name: campgroundName,
-    image: image,
-    description: description
-  };
-
-  Campground.create(newCampground, function(error, newCampground){
-    if(error){
-      console.log(error);
-    } else {
-      response.redirect("/campgrounds");
-    }
-  });
-});
-
-app.get("/campgrounds/new", function(request, response){
-  response.render("campgrounds/new");
-});
-
-// SHOW - Show page for each campsite
-app.get("/campgrounds/:id", function(request, response){
-  var id = request.params.id
-  Campground.findById(id).populate("comments").exec(function(error, foundCamp){
-    if(error){
-      console.log(error);
-    } else {
-      response.render("campgrounds/show", { campground: foundCamp });
-    }
-  });
-});
-
-//============================
-// COMMENTS ROUTES
-//============================
-app.get("/campgrounds/:id/comments/new", isLoggedIn, function(request, response){
-  Campground.findById(request.params.id, function(error,campground){
-    if(error){
-      console.log(error);
-    } else {
-      response.render("comments/new", { campground: campground});
-    }
-  })
-});
-
-app.post("/campgrounds/:id/comments", isLoggedIn, function(request, response){
-  // Find the correct campground to leave the comment on
-  Campground.findById(request.params.id, function(error, campground){
-    if(error){
-      console.log(error);
-    } else {
-      // Creates the new comment
-      Comment.create(request.body.comment, function(error, comment){
-        if(error){
-          console.log(error);
-        } else {
-          campground.comments.push(comment);
-          campground.save();
-          // redirect to the campground page
-          response.redirect("/campgrounds/" + campground._id);
-        }
-      });
-    }
-  })
-});
-
-//============================
-// SIGN UP ROUTES
-//============================
-app.get("/signup", function(request, response){
-  response.render("signup");
-});
-
-app.post("/signup", function(request, response){
-  var newUser = new User({username: request.body.username})
-  User.register(newUser, request.body.password, function(error, user){
-    if(error){
-      console.log(error);
-      return response.render("signup");
-    }
-    passport.authenticate("local")(request, response, function(){
-      response.redirect("/campgrounds");
-    });
-  });
-});
-
-//============================
-// LOGIN ROUTES
-//============================
-app.get("/login", function(request, response){
-  response.render("login");
-});
-
-app.post("/login", passport.authenticate("local", {
-    successRedirect: "/campgrounds",
-    failureRedirect: "/login"
-  }), function(request, response){
-  // -------------
-});
-
-app.get("/logout", function(request, response){
-  request.logout();
-  response.redirect("/");
-});
 
 // App Begins Listening Here
 app.listen(app.get('port'), function(){
