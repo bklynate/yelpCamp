@@ -54,23 +54,24 @@ router.get("/campgrounds/:id", function(request, response){
 });
 
 // EDIT - Edit the a campsite
-router.get("/campgrounds/:id/edit", isLoggedIn, function(request, response){
+router.get("/campgrounds/:id/edit", function(request, response){
   Campground.findById(request.params.id, function(error, foundCamp){
     if(error){
       console.log(error);
     } else {
-      response.render("campgrounds/edit",{campground:foundCamp});
+      response.render("campgrounds/edit", {campground:foundCamp});
     }
   })
 });
 
 // UPDATE - Update the campsite information
-router.put("/campgrounds/:id", isLoggedIn,  function(request, response){
-  Campground.findByIdAndUpdate(request.params.id, request.body, function(error, editedCamp){
+router.put("/campgrounds/:id",  function(request, response){
+  Campground.findByIdAndUpdate(request.params.id, request.body.campground, function(error, editedCamp){
     if(error){
       console.log(error);
+      response.render("/campgrounds");
     } else {
-      response.redirect("/campgrounds/" + request.params.id)
+      response.redirect("/campgrounds/" + request.params.id);
     }
   });
 });
