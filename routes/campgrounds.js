@@ -95,7 +95,7 @@ function isLoggedIn(request, response, next){
 }
 
 function checkCampsiteOwnership(request, response, next){
-  // check if quest is authenticated
+  // check if request is authenticated
   // if it is authenticated, then check for
   // ownership of the campsite
   if(request.isAuthenticated()){

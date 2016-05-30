@@ -43,7 +43,8 @@ router.post("/", isLoggedIn, function(request, response){
   })
 });
 
-router.get("/:comment_id/edit", function(request, response){
+// EDIT - Edit comment
+router.get("/:comment_id/edit", checkCommentOwnership, function(request, response){
   Comment.findById(request.params.comment_id, function(error, foundComment){
     if(error){
       console.log(error);
@@ -64,6 +65,38 @@ router.put("/:comment_id", function(request, response){
     }
   });
 })
+
+router.delete("/:comment_id", checkCommentOwnership, function(request, response){
+  Comment.findByIdAndRemove(request.params.comment_id, function(error){
+    if(error){
+      response.redirect("back");
+    } else {
+      response.redirect("back");
+    }
+  })
+});
+
+function checkCommentOwnership(request, response, next){
+  // check if request is authenticated
+  // if it is authenticated, then check for
+  // ownership of the comment
+  if(request.isAuthenticated()){
+    Comment.findById(request.params.comment_id, function(error, foundComment){
+      if(error){
+        console.log(error);
+        response.redirect("back");
+      } else if(foundComment.author.id.equals(request.user._id)) {
+        next();
+      } else {
+        console.log("You Don't Have Permission To Complete This Action");
+        response.redirect("back")
+      }
+    })
+  } else {
+    console.log("DENIED");
+    response.redirect("back")
+  }
+}
 
 function isLoggedIn(request, response, next){
   if(request.isAuthenticated()){
