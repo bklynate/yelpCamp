@@ -2,6 +2,10 @@ body {
   font-family: 'Work Sans', sans-serif !important;
 }
 
+#delete_form {
+  display: inline;
+}
+
 .thumbnail .caption-full {
   padding: 9px;
 }

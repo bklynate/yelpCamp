@@ -3,7 +3,11 @@ var passportLocalMongoose = require("passport-local-mongoose");
 
 var userSchema = new mongoose.Schema({
   username: String,
-  password: String
+  password: String,
+  created:{
+    type: Date,
+    default: Date.now
+  }
 });
 
 // ADDS THE METHODS FOR USER AUTH
