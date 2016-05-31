@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var Campground = require("../models/campground");
+var middleware = require("../middleware");
 
 router.get("/", function(request, response){
   Campground.find({}, function(error, campgrounds){
@@ -12,7 +13,7 @@ router.get("/", function(request, response){
   });
 });
 
-router.post("/", isLoggedIn, function(request, response){
+router.post("/", middleware.isLoggedIn, function(request, response){
   var campgroundName = request.body.campgroundName;
   var image = request.body.image;
   var description = request.body.description;
@@ -37,7 +38,7 @@ router.post("/", isLoggedIn, function(request, response){
   });
 });
 
-router.get("/new", isLoggedIn, function(request, response){
+router.get("/new", middleware.isLoggedIn, function(request, response){
   response.render("campgrounds/new");
 });
 
@@ -54,7 +55,7 @@ router.get("/:id", function(request, response){
 });
 
 // EDIT - Edit the a campsite
-router.get("/:id/edit", checkCampsiteOwnership, function(request, response){
+router.get("/:id/edit", middleware.checkCampsiteOwnership, function(request, response){
   Campground.findById(request.params.id, function(error, foundCamp){
     if(error){
       console.log(error);
@@ -65,7 +66,7 @@ router.get("/:id/edit", checkCampsiteOwnership, function(request, response){
 });
 
 // UPDATE - Update the campsite information
-router.put("/:id", checkCampsiteOwnership, function(request, response){
+router.put("/:id", middleware.checkCampsiteOwnership, function(request, response){
   Campground.findByIdAndUpdate(request.params.id, request.body.campground, function(error, editedCamp){
     if(error){
       console.log(error);
@@ -77,7 +78,7 @@ router.put("/:id", checkCampsiteOwnership, function(request, response){
 });
 
 // DESTROY - Delete a campsite
-router.delete("/:id", checkCampsiteOwnership, function(request, repsonse){
+router.delete("/:id", middleware.checkCampsiteOwnership, function(request, repsonse){
   Campground.findByIdAndRemove(request.params.id, function(error, deletedCamp){
     if(error){
       response.redirect("/campgrounds");
@@ -86,34 +87,5 @@ router.delete("/:id", checkCampsiteOwnership, function(request, repsonse){
     }
   });
 });
-
-function isLoggedIn(request, response, next){
-  if(request.isAuthenticated()){
-    return next();
-  }
-  response.redirect("/login");
-}
-
-function checkCampsiteOwnership(request, response, next){
-  // check if request is authenticated
-  // if it is authenticated, then check for
-  // ownership of the campsite
-  if(request.isAuthenticated()){
-    Campground.findById(request.params.id, function(error, foundCamp){
-      if(error){
-        console.log(error);
-        response.redirect("back");
-      } else if(foundCamp.author.id.equals(request.user._id)) {
-        next();
-      } else {
-        console.log("You Don't Have Permission To Complete This Action");
-        response.redirect("back")
-      }
-    })
-  } else {
-    console.log("DENIED");
-    response.redirect("back")
-  }
-}
 
 module.exports = router;
