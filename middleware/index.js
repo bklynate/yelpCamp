@@ -40,18 +40,18 @@ middlewareObj.checkCampsiteOwnership = function(request, response, next){
   if(request.isAuthenticated()){
     Campground.findById(request.params.id, function(error, foundCamp){
       if(error){
-        console.log(error);
+        request.flash("error", "Campsite Not Found");
         response.redirect("back");
       } else if(foundCamp.author.id.equals(request.user._id)) {
         next();
       } else {
-        console.log("You Don't Have Permission To Complete This Action");
+        request.flash("error", "You Don't Have Permission To Complete This Action");
         response.redirect("back")
       }
     })
   } else {
-    console.log("DENIED");
-    response.redirect("back")
+    request.flash("error", "Please log into the application..");
+        response.redirect("back")
   }
 }
 

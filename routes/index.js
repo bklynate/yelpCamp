@@ -23,10 +23,11 @@ router.post("/signup", function(request, response){
   var newUser = new User({username: request.body.username})
   User.register(newUser, request.body.password, function(error, user){
     if(error){
-      console.log(error);
+      request.flash("error", error.message);
       return response.render("signup");
     }
     passport.authenticate("local")(request, response, function(){
+      request.flash("success", user.username + " created !");
       response.redirect("/campgrounds");
     });
   });
