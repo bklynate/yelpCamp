@@ -29,6 +29,7 @@ middlewareObj.isLoggedIn = function(request, response, next){
   if(request.isAuthenticated()){
     return next();
   }
+  request.flash("error", "Please log in to the application..")
   response.redirect("/login");
 }
 
